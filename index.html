@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Smart Student Hub | Student Record Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{--pri:#4338CA;--sec:#2563EB;--acc:#06B6D4;--bg:#F8FAFC;--card:#fff;--ink:#0F172A;--mut:#64748B;--line:#E2E8F0;--ok:#16A34A;--warn:#D97706;--bad:#DC2626;--soft:#EEF2FF;--pc:#4338CA;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1020;--card:#131A2F;--ink:#E5EAF7;--mut:#94A3C0;--line:#243052;--soft:#1B2347;--pc:#818CF8;--warn:#F59E0B;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1020;--card:#131A2F;--ink:#E5EAF7;--mut:#94A3C0;--line:#243052;--soft:#1B2347;--pc:#818CF8;--warn:#F59E0B;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--card);z-index:30}
+h1,h2,h3,h4{margin:0}h3{font-size:1.1rem}h4{margin:1rem 0 .5rem;font-size:.95rem}p{margin:.25rem 0 .75rem}
+.mut{color:var(--mut)}.grow{flex:1}.row{display:flex;gap:.5rem;align-items:center}.end{justify-content:flex-end;margin-top:1rem}.pad{padding:1rem}
+input,select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.6rem .75rem;width:100%;min-height:42px}
+input:disabled,select:disabled{opacity:.65}:focus-visible{outline:2px solid var(--sec);outline-offset:2px}
+label{display:grid;gap:.3rem;font-weight:500;font-size:.88rem}
+svg{width:18px;height:18px;flex:none}
+.btn{font:inherit;font-weight:600;display:inline-flex;align-items:center;gap:.45rem;padding:.5rem .95rem;min-height:42px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.btn:hover,.icon:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgb(15 23 42/.12)}
+.btn.pri{background:linear-gradient(135deg,#4338CA,#2563EB);color:#fff;border:0}.btn.bad{background:var(--bad);color:#fff;border:0}
+.icon{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;transition:transform .15s,box-shadow .15s}
+.icon.bad{color:var(--bad)}.menu{display:none}
+.link{background:none;border:0;color:var(--pc);font:inherit;font-weight:600;cursor:pointer;padding:.5rem 0}
+.err{color:var(--bad);font-size:.88rem;min-height:1.3em;margin:.25rem 0}
+.login{min-height:100dvh;display:grid;place-items:center;padding:1rem;background:radial-gradient(circle at 20% 10%,#4338CA33,transparent 45%),radial-gradient(circle at 85% 90%,#06B6D433,transparent 45%),var(--bg)}
+.lcard{width:min(400px,100%);background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.5rem;box-shadow:0 20px 50px rgb(15 23 42/.12);display:grid;gap:.5rem}
+.lcard form{display:grid;gap:.75rem}.pw{position:relative;display:block}.pw input{padding-right:3rem}.pw .icon{position:absolute;right:2px;top:1px;border:0;background:none}
+.demo{font-size:.85rem;color:var(--mut);background:var(--soft);border-radius:10px;padding:.7rem .9rem}
+.brand{display:flex;align-items:center;gap:.6rem;font-size:1.05rem;margin-bottom:.75rem}.brand svg{width:30px;height:30px;padding:6px;border-radius:9px;background:linear-gradient(135deg,#4338CA,#06B6D4);color:#fff}
+.side{position:fixed;left:0;top:0;bottom:0;width:236px;background:var(--card);border-right:1px solid var(--line);padding:calc(1rem + env(safe-area-inset-top,0px)) .75rem 1rem;display:flex;flex-direction:column;gap:.25rem;z-index:40;transition:transform .25s}
+.nv{font:inherit;font-weight:500;display:flex;align-items:center;gap:.7rem;padding:.65rem .8rem;border:0;border-radius:10px;background:none;color:var(--mut);cursor:pointer;text-align:left;transition:background .15s,color .15s}
+.nv:hover{background:var(--soft);color:var(--pc)}.nv.on{background:var(--pri);color:#fff}
+.who{padding:.8rem;border-radius:10px;background:var(--soft);display:grid;font-size:.88rem}
+.main{margin-left:236px;min-width:0}
+.top{position:sticky;top:env(safe-area-inset-top,0px);display:flex;align-items:center;gap:.75rem;padding:.7rem 1.25rem;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);z-index:20}
+.top h1{font-size:1.25rem}main{padding:1.25rem}.page{animation:rise .3s ease both;display:grid;gap:1rem}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}@keyframes fade{from{opacity:0}to{opacity:1}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;min-width:0}.card.pad{padding:1rem}
+.card:hover{box-shadow:0 8px 24px rgb(15 23 42/.06)}
+.grid6{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:1rem}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:1rem}
+.stat{display:flex;gap:.8rem;align-items:center;padding:1rem}.stat b{font-size:1.6rem;line-height:1.1}
+.si{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:color-mix(in srgb,currentColor 14%,transparent)}
+.pri{color:var(--pc)}.sec{color:var(--sec)}.acc{color:var(--acc)}.ok{color:var(--ok)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+.ch{position:relative;height:240px}.card h3{margin-bottom:.6rem}
+.li{display:flex;justify-content:space-between;gap:.75rem;padding:.55rem 0;border-top:1px solid var(--line)}.li:first-of-type{border-top:0}
+.qa{display:flex;gap:.6rem;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse}th{text-align:left;font-weight:600;color:var(--mut);font-size:.82rem;padding:.7rem 1rem;border-bottom:1px solid var(--line)}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--line);vertical-align:middle}tbody tr{transition:background .15s}tbody tr:hover{background:var(--soft)}
+.ac{white-space:nowrap}.ac .icon{margin-left:.3rem}
+.tb{display:flex;gap:.6rem;padding:1rem;flex-wrap:wrap}.sr{position:relative;flex:1 1 240px}.sr svg{position:absolute;left:.8rem;top:.8rem;color:var(--mut)}.sr input{padding-left:2.4rem}.tb select{flex:0 1 160px}
+.pill{display:inline-block;padding:.1rem .6rem;border-radius:99px;font-size:.8rem;font-weight:600;background:color-mix(in srgb,currentColor 14%,transparent)}
+.bar{display:inline-block;vertical-align:middle;width:70px;height:7px;border-radius:9px;background:var(--line);margin-right:.5rem;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc)}
+.empty{text-align:center;color:var(--mut);padding:2rem 1rem}.empty svg{width:36px;height:36px;display:block;margin:0 auto .5rem}
+.sk{background:linear-gradient(90deg,var(--line),var(--soft),var(--line));background-size:200% 100%;animation:sh 1.1s infinite;min-height:84px}.sk.tall{min-height:260px}@keyframes sh{to{background-position:-200% 0}}
+.ov{position:fixed;inset:0;background:rgb(15 23 42/.55);display:grid;place-items:center;padding:1rem;z-index:100;overflow:auto;animation:fade .2s}
+.dlg{background:var(--card);border-radius:16px;padding:1.25rem;width:min(560px,100%);max-height:92dvh;overflow:auto;animation:rise .25s}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:.75rem}
+#toasts{position:fixed;right:1rem;bottom:calc(1rem + env(safe-area-inset-bottom,0px));display:grid;gap:.5rem;z-index:200;max-width:calc(100% - 2rem)}
+.toast{padding:.7rem 1rem;border-radius:10px;background:var(--ink);color:var(--bg);border-left:4px solid var(--ok);animation:rise .25s;box-shadow:0 8px 24px rgb(0 0 0/.25)}.toast.bad{border-color:var(--bad)}
+@media(max-width:860px){.side{transform:translateX(-100%)}.side.open{transform:none;box-shadow:0 0 0 100vmax rgb(15 23 42/.5)}.main{margin-left:0}.menu{display:inline-grid}.btn span.hide{display:none}}
+@media(max-width:720px){main{padding:.8rem}thead{display:none}table,tbody,tr,td{display:block}tr{padding:.6rem 1rem;border-bottom:1px solid var(--line)}td{border:0;padding:.25rem 0;display:flex;justify-content:space-between;align-items:center;gap:1rem}td::before{content:attr(data-l);color:var(--mut);font-size:.82rem}td:empty{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<script>(function(){var t;try{t=localStorage.getItem('shub-theme')}catch(e){}document.documentElement.dataset.theme=t||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light')})()</script>
+</head>
+<body>
+<div id="app"></div><div id="toasts" aria-live="polite"></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ic=n=>`<i data-lucide="${n}"></i>`,icons=()=>{try{window.lucide&&lucide.createIcons()}catch(e){}};
+const K='shub-v1',SK='shub-session',TK='shub-theme',SUBJ=['Mathematics','Science','English','Computer','History'],CLS=['8A','8B','9A','9B','10A'];
+const RL={admin:'Administrator',teacher:'Teacher',viewer:'Viewer'};
+let DB,me,view='dash',charts=[];
+const R=()=>({add:me.r==='admin',del:me.r==='admin',all:me.r==='admin',acad:me.r!=='viewer',rep:me.r!=='viewer',exp:me.r==='admin',usr:me.r==='admin'});
+const pct=s=>Math.round(SUBJ.reduce((a,j)=>a+(+s.marks[j]||0),0)/SUBJ.length);
+const grade=p=>p>=90?'A+':p>=80?'A':p>=70?'B':p>=60?'C':p>=50?'D':'F';
+const gc=g=>g==='F'?'bad':g==='D'||g==='C'?'warn':'ok';
+const att=s=>s.att.t?Math.round(100*s.att.p/s.att.t):0;
+const fmt=d=>new Date(d).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
+const ago=t=>{const m=Math.round((Date.now()-t)/6e4);return m<1?'just now':m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'};
+const opt=(a,v)=>a.map(x=>`<option${x===v?' selected':''}>${x}</option>`).join('');
+const roleOpt=v=>Object.keys(RL).map(x=>`<option value="${x}"${x===v?' selected':''}>${RL[x]}</option>`).join('');
+function save(){try{localStorage.setItem(K,JSON.stringify(DB))}catch(e){toast('Could not save. Browser storage is unavailable.','bad')}}
+function addLog(m){DB.log.unshift({t:Date.now(),m});DB.log.length=Math.min(DB.log.length,40);save()}
+function toast(m,t){const d=document.createElement('div');d.className='toast '+(t||'ok');d.textContent=m;$('#toasts').append(d);setTimeout(()=>d.remove(),3400)}
+function modal(html){const o=document.createElement('div');o.className='ov';o.innerHTML=`<div class="dlg" role="dialog" aria-modal="true">${html}</div>`;document.body.append(o);o.close=()=>o.remove();o.addEventListener('mousedown',e=>{if(e.target===o)o.close()});icons();return o}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=[...document.querySelectorAll('.ov')].pop();o&&o.remove()}});
+const confirmBox=(msg,btn)=>new Promise(res=>{const o=modal(`<h3>Please confirm</h3><p class="mut">${esc(msg)}</p><div class="row end"><button class="btn" data-v="0">Cancel</button><button class="btn bad" data-v="1">${btn||'Delete'}</button></div>`);o.onclick=e=>{const b=e.target.closest('button');if(b){o.close();res(b.dataset.v==='1')}}});
+const b64=u=>btoa(String.fromCharCode(...u)),newSalt=()=>b64(crypto.getRandomValues(new Uint8Array(16)));
+async function hash(p,salt){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(p),'PBKDF2',false,['deriveBits']);return b64(new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2',salt:Uint8Array.from(atob(salt),c=>c.charCodeAt(0)),iterations:100000,hash:'SHA-256'},k,256)))}
+
+async function seed(){
+ const users=[];
+ for(const [u,n,r,p] of [['admin','Asha Verma','admin','Admin@123'],['teacher','Rahul Nair','teacher','Teach@123'],['viewer','Neha Kapoor','viewer','View@123']]){const s=newSalt();users.push({u,n,r,s,h:await hash(p,s)})}
+ let x=7;const rnd=()=>(x=(x*16807)%2147483647)/2147483647,D=864e5,now=Date.now();
+ const F=['Aarav','Meera','Rohan','Sana','Kabir','Ishita','Vivaan','Anaya','Arjun','Diya','Reyansh','Kiara'],L=['Sharma','Iyer','Das','Khan','Mehta','Nair','Patel','Singh'],students=[];
+ for(let i=0;i<30;i++){const f=F[i%12],l=L[(i*3)%8],marks={};SUBJ.forEach(j=>marks[j]=Math.round(35+rnd()*63));
+  const t=60+Math.floor(rnd()*30),d=new Date(now+Math.floor(rnd()*120)*D);d.setFullYear(2009+Math.floor(rnd()*4));const adm=now-Math.floor(rnd()*170)*D;
+  students.push({id:'SH'+(1001+i),roll:String(Math.floor(i/5)+1),name:f+' '+l,email:(f+'.'+l+i).toLowerCase()+'@school.edu',cls:CLS[i%5],gender:(i%12)%2?'Female':'Male',dob:d.toISOString().slice(0,10),status:rnd()>.18?'Active':'Inactive',marks,att:{p:Math.floor(t*(.7+rnd()*.28)),t},adm,upd:adm})}
+ return{users,students,log:[{t:now,m:'Sample data loaded'}]}}
+
+function loginView(){
+ $('#app').innerHTML=`<div class="login"><div class="lcard"><div class="brand">${ic('graduation-cap')}<b>Smart Student Hub</b></div><h2>Sign in</h2><p class="mut">Use your school account to continue.</p>
+ <form id="lf" novalidate><label>Username<input id="lu" autocomplete="username"></label><label>Password<span class="pw"><input id="lp" type="password" autocomplete="current-password"><button type="button" id="eye" class="icon" title="Show or hide password" aria-label="Show or hide password">${ic('eye')}</button></span></label>
+ <p class="err" id="le" role="alert"></p><button class="btn pri" type="submit" style="justify-content:center">Sign in</button></form>
+ <button class="link" id="fp" type="button">Forgot password?</button>
+ <div class="demo"><b>Demo accounts</b><br>admin / Admin@123<br>teacher / Teach@123<br>viewer / View@123</div></div></div>`;icons();
+ $('#eye').onclick=()=>{const p=$('#lp'),s=p.type==='password';p.type=s?'text':'password';$('#eye').innerHTML=ic(s?'eye-off':'eye');icons()};
+ $('#lf').onsubmit=async e=>{e.preventDefault();const u=$('#lu').value.trim().toLowerCase(),p=$('#lp').value,er=$('#le');
+  if(!u||!p){er.textContent='Enter your username and password.';return}
+  const x=DB.users.find(z=>z.u===u);if(!x||await hash(p,x.s)!==x.h){er.textContent='Incorrect username or password.';return}
+  me=x;try{localStorage.setItem(SK,x.u)}catch(e){}addLog(x.n+' signed in');shell();go('dash')};
+ $('#fp').onclick=()=>{const o=modal(`<h3>Reset your password</h3><p class="mut">Enter your username. An administrator will issue a temporary password.</p><input id="fu" placeholder="Username"><div class="row end"><button class="btn" data-v="0">Cancel</button><button class="btn pri" data-v="1">Send request</button></div>`);
+  o.onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.v==='1'){const x=DB.users.find(z=>z.u===$('#fu',o).value.trim().toLowerCase());if(x){x.reset=true;addLog('Password reset requested for '+x.u)}toast('If that account exists, an administrator has been notified.')}o.close()}}}
+
+function shell(){const r=R(),nv=[['dash','layout-dashboard','Dashboard',1],['stu','users','Students',1],['rep','file-text','Reports',r.rep],['usr','shield-check','User access',r.usr]].filter(n=>n[3]);
+ $('#app').innerHTML=`<aside class="side" id="side"><div class="brand">${ic('graduation-cap')}<b>Smart Student Hub</b></div>${nv.map(n=>`<button class="nv" data-v="${n[0]}">${ic(n[1])}<span>${n[2]}</span></button>`).join('')}<div class="grow"></div><div class="who"><b>${esc(me.n)}</b><span class="mut">${RL[me.r]}</span></div></aside>
+ <div class="main"><header class="top"><button class="icon menu" id="mb" aria-label="Open menu">${ic('menu')}</button><h1 id="ttl"></h1><div class="grow"></div><button class="icon" id="th" title="Switch light or dark mode" aria-label="Switch theme">${ic(document.documentElement.dataset.theme==='dark'?'sun':'moon')}</button><button class="btn" id="lo" title="Sign out">${ic('log-out')}<span class="hide">Sign out</span></button></header><main id="main"></main></div>`;icons();
+ document.querySelectorAll('.nv').forEach(b=>b.onclick=()=>go(b.dataset.v));
+ $('#mb').onclick=()=>$('#side').classList.toggle('open');
+ $('#th').onclick=()=>{const t=document.documentElement.dataset.theme==='dark'?'light':'dark';document.documentElement.dataset.theme=t;try{localStorage.setItem(TK,t)}catch(e){}$('#th').innerHTML=ic(t==='dark'?'sun':'moon');icons();go(view)};
+ $('#lo').onclick=async()=>{if(await confirmBox('Sign out of Smart Student Hub?','Sign out')){addLog(me.n+' signed out');try{localStorage.removeItem(SK)}catch(e){}me=null;loginView()}};
+ $('#main').onclick=e=>{$('#side').classList.remove('open');const b=e.target.closest('[data-act]');if(b)act[b.dataset.act](b.dataset.id)}}
+
+function go(v){const r=R();if((v==='rep'&&!r.rep)||(v==='usr'&&!r.usr))v='dash';view=v;charts.forEach(c=>c.destroy());charts=[];
+ document.querySelectorAll('.nv').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('#side').classList.remove('open');
+ $('#ttl').textContent={dash:'Dashboard',stu:'Students',rep:'Reports',usr:'User access'}[v];
+ $('#main').innerHTML='<div class="page"><div class="grid6">'+'<div class="card sk"></div>'.repeat(6)+'</div><div class="card sk tall"></div></div>';
+ clearTimeout(go.t);go.t=setTimeout(()=>{$('#main').innerHTML=`<div class="page">${V[v]()}</div>`;after[v]&&after[v]();icons()},350)}
+
+const V={
+dash(){const S=DB.students,n=S.length,a=S.filter(s=>s.status==='Active').length,r=R();
+ const avg=n?Math.round(S.reduce((x,s)=>x+pct(s),0)/n):0,tp=S.reduce((x,s)=>x+s.att.p,0),tt=S.reduce((x,s)=>x+s.att.t,0),ap=tt?Math.round(100*tp/tt):0;
+ const cards=[['Total students',n,'users','pri',''],['Active students',a,'user-check','ok',''],['Inactive students',n-a,'user-x','warn',''],['Total classes',new Set(S.map(s=>s.cls)).size,'school','sec',''],['Average marks',avg,'award','acc','%'],['Attendance',ap,'calendar-check','ok','%']];
+ const t0=new Date(),td=new Date(t0.getFullYear(),t0.getMonth(),t0.getDate());
+ const bd=S.filter(s=>s.dob).map(s=>{const d=new Date(s.dob);let x=new Date(td.getFullYear(),d.getMonth(),d.getDate());if(x<td)x.setFullYear(td.getFullYear()+1);return{s,x,days:Math.round((x-td)/864e5)}}).sort((a,b)=>a.days-b.days).slice(0,5);
+ const li=(a,b)=>`<div class="li"><span>${a}</span><span class="mut">${b}</span></div>`,emp='<div class="empty">Nothing here yet.</div>';
+ return `<div class="grid6">${cards.map(c=>`<div class="card stat"><span class="si ${c[3]}">${ic(c[2])}</span><div><div class="mut">${c[0]}</div><b data-n="${c[1]}" data-s="${c[4]}">0${c[4]}</b></div></div>`).join('')}</div>
+ <div class="card pad"><h3>Quick actions</h3><div class="qa">${r.add?`<button class="btn pri" data-act="add">${ic('user-plus')}<span>Add student</span></button>`:''}<button class="btn" data-act="all">${ic('users')}<span>View all students</span></button>${r.rep?`<button class="btn" data-act="rep">${ic('file-text')}<span>Generate report</span></button>`:''}</div></div>
+ <div class="cols"><div class="card pad"><h3>Students by class</h3><div class="ch"><canvas id="c1"></canvas></div></div><div class="card pad"><h3>Gender distribution</h3><div class="ch"><canvas id="c2"></canvas></div></div><div class="card pad"><h3>Attendance overview</h3><div class="ch"><canvas id="c3"></canvas></div></div><div class="card pad"><h3>Academic performance</h3><div class="ch"><canvas id="c4"></canvas></div></div><div class="card pad"><h3>Monthly admissions</h3><div class="ch"><canvas id="c5"></canvas></div></div></div>
+ <div class="cols"><div class="card pad"><h3>Recently added</h3>${[...S].sort((a,b)=>b.adm-a.adm).slice(0,5).map(s=>li(esc(s.name)+' ('+s.cls+')',fmt(s.adm))).join('')||emp}</div>
+ <div class="card pad"><h3>Recently updated</h3>${[...S].sort((a,b)=>b.upd-a.upd).slice(0,5).map(s=>li(esc(s.name),ago(s.upd))).join('')||emp}</div>
+ <div class="card pad"><h3>Upcoming birthdays</h3>${bd.map(b=>li(esc(b.s.name),b.days?b.x.toLocaleDateString(undefined,{day:'numeric',month:'short'})+' (in '+b.days+' d)':'Today')).join('')||emp}</div>
+ <div class="card pad"><h3>Recent activity</h3>${DB.log.slice(0,6).map(l=>li(esc(l.m),ago(l.t))).join('')||emp}</div></div>`},
+stu(){const r=R();return `<div class="card"><div class="tb"><div class="sr">${ic('search')}<input id="sq" placeholder="Search name, ID, roll, or email" aria-label="Search students"></div><select id="sc" aria-label="Filter by class"><option value="">All classes</option>${opt(CLS)}</select><select id="ss" aria-label="Filter by status"><option value="">All statuses</option><option>Active</option><option>Inactive</option></select>${r.add?`<button class="btn pri" data-act="add" title="Add a new student">${ic('user-plus')}<span>Add student</span></button>`:''}</div><div class="mut pad" id="cnt" style="padding-top:0"></div>
+ <table><thead><tr><th>ID</th><th>Student</th><th>Class</th><th>Marks</th><th>Attendance</th><th>Status</th><th></th></tr></thead><tbody id="tb"></tbody></table></div>`},
+rep(){const S=DB.students,r=R();const rows=CLS.map(c=>{const L=S.filter(s=>s.cls===c),n=L.length,f=k=>n?Math.round(L.reduce((a,s)=>a+k(s),0)/n):0;return{c,n,avg:f(pct),at:f(att),pass:n?Math.round(100*L.filter(s=>pct(s)>=50).length/n):0}});
+ const top=[...S].sort((a,b)=>pct(b)-pct(a)).slice(0,5);
+ return `<div class="card pad"><h3>Export</h3>${r.exp?`<div class="qa"><button class="btn pri" data-act="csv">${ic('download')}<span>Download CSV</span></button><button class="btn" data-act="pdf">${ic('file-text')}<span>Download PDF</span></button></div>`:'<p class="mut">Exports are available to administrators.</p>'}</div>
+ <div class="card"><div class="pad"><h3>Class summary</h3></div><table><thead><tr><th>Class</th><th>Students</th><th>Average marks</th><th>Attendance</th><th>Pass rate</th></tr></thead><tbody>${rows.map(x=>`<tr><td data-l="Class"><b>${x.c}</b></td><td data-l="Students">${x.n}</td><td data-l="Average marks">${x.avg}%</td><td data-l="Attendance">${x.at}%</td><td data-l="Pass rate">${x.pass}%</td></tr>`).join('')}</tbody></table></div>
+ <div class="card pad"><h3>Top performers</h3>${top.map(s=>`<div class="li"><span>${esc(s.name)} (${s.cls})</span><span class="pill ok">${pct(s)}% (${grade(pct(s))})</span></div>`).join('')}</div>`},
+usr(){return `<div class="card"><table><thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Password</th></tr></thead><tbody>${DB.users.map(u=>`<tr><td data-l="Name"><b>${esc(u.n)}</b></td><td data-l="Username">${esc(u.u)}</td><td data-l="Role"><select data-role="${esc(u.u)}"${u.u===me.u?' disabled title="You cannot change your own role"':''}>${roleOpt(u.r)}</select></td><td data-l="Password">${u.reset?'<span class="pill warn">Reset requested</span>':''}<button class="btn" data-act="reset" data-id="${esc(u.u)}">${ic('key-round')}<span>Reset</span></button></td></tr>`).join('')}</tbody></table></div>
+ <div class="card pad"><h3>Add a user</h3><form id="uf" class="fg" novalidate><label>Full name<input name="n"></label><label>Username<input name="u" autocomplete="off"></label><label>Role<select name="r">${roleOpt('viewer')}</select></label><label>Temporary password<input name="p" type="password" autocomplete="new-password"></label></form><p class="err" id="ue" role="alert"></p><button class="btn pri" id="ub">${ic('user-plus')}<span>Add user</span></button></div>`}};
+
+function rows(){const q=$('#sq').value.trim().toLowerCase(),c=$('#sc').value,t=$('#ss').value,r=R();
+ const L=DB.students.filter(s=>(!c||s.cls===c)&&(!t||s.status===t)&&[s.name,s.id,s.roll,s.email].join(' ').toLowerCase().includes(q));
+ $('#cnt').textContent=L.length+' of '+DB.students.length+' students';
+ $('#tb').innerHTML=L.length?L.map(s=>{const p=pct(s),g=grade(p),a=att(s);return `<tr><td data-l="ID">${s.id}<div class="mut">Roll ${esc(s.roll)}</div></td><td data-l="Student"><span><b>${esc(s.name)}</b><div class="mut">${esc(s.email)}</div></span></td><td data-l="Class">${s.cls}</td><td data-l="Marks"><span class="pill ${gc(g)}">${p}% (${g})</span></td><td data-l="Attendance"><span><span class="bar"><i style="width:${a}%"></i></span>${a}%</span></td><td data-l="Status"><span class="pill ${s.status==='Active'?'ok':'warn'}">${s.status}</span></td><td class="ac"><button class="icon" data-act="edit" data-id="${s.id}" title="${r.acad?'Edit student':'View student'}" aria-label="${r.acad?'Edit':'View'} ${esc(s.name)}">${ic(r.acad?'pencil':'eye')}</button>${r.del?`<button class="icon bad" data-act="del" data-id="${s.id}" title="Delete student" aria-label="Delete ${esc(s.name)}">${ic('trash-2')}</button>`:''}</td></tr>`}).join(''):`<tr><td colspan="7" class="empty">${ic('search')}No students match your filters. Try a different search or clear the filters.</td></tr>`;icons()}
+
+const after={
+stu(){['sq','sc','ss'].forEach(i=>$('#'+i).addEventListener('input',rows));rows()},
+dash(){document.querySelectorAll('[data-n]').forEach(e=>{const to=+e.dataset.n,sf=e.dataset.s||'',t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/700);e.textContent=Math.round(to*(1-Math.pow(1-k,3)))+sf;if(k<1)requestAnimationFrame(f)})(t0)});
+ if(!window.Chart)return;const S=DB.students,css=getComputedStyle(document.documentElement),gl=css.getPropertyValue('--line').trim();Chart.defaults.color=css.getPropertyValue('--mut').trim();Chart.defaults.font.family='Inter,system-ui,sans-serif';
+ const mk=(id,cfg)=>{cfg.options=Object.assign({responsive:true,maintainAspectRatio:false},cfg.options);charts.push(new Chart($('#'+id),cfg))},cnt=(a,f)=>a.map(x=>S.filter(s=>f(s,x)).length);
+ const sc={y:{beginAtZero:true,ticks:{precision:0},grid:{color:gl}},x:{grid:{display:false}}},nl={plugins:{legend:{display:false}},scales:sc},dn={cutout:'62%',plugins:{legend:{position:'bottom'}}};
+ mk('c1',{type:'bar',data:{labels:CLS,datasets:[{label:'Students',data:cnt(CLS,(s,c)=>s.cls===c),backgroundColor:'#4338CA',borderRadius:6}]},options:nl});
+ mk('c2',{type:'doughnut',data:{labels:['Male','Female','Other'],datasets:[{data:cnt(['Male','Female','Other'],(s,g)=>s.gender===g),backgroundColor:['#2563EB','#06B6D4','#F59E0B'],borderColor:css.getPropertyValue('--card').trim()}]},options:dn});
+ const tp=S.reduce((x,s)=>x+s.att.p,0),tt=S.reduce((x,s)=>x+s.att.t,0);
+ mk('c3',{type:'doughnut',data:{labels:['Present','Absent'],datasets:[{data:[tp,tt-tp],backgroundColor:['#16A34A','#DC2626'],borderColor:css.getPropertyValue('--card').trim()}]},options:dn});
+ const G=['A+','A','B','C','D','F'];mk('c4',{type:'bar',data:{labels:G,datasets:[{label:'Students',data:cnt(G,(s,g)=>grade(pct(s))===g),backgroundColor:['#16A34A','#22C55E','#2563EB','#06B6D4','#F59E0B','#DC2626'],borderRadius:6}]},options:nl});
+ const ms=[...Array(6)].map((_,i)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-5+i);return d});
+ mk('c5',{type:'line',data:{labels:ms.map(d=>d.toLocaleString(undefined,{month:'short'})),datasets:[{label:'Admissions',data:ms.map(d=>S.filter(s=>{const a=new Date(s.adm);return a.getMonth()===d.getMonth()&&a.getFullYear()===d.getFullYear()}).length),borderColor:'#06B6D4',backgroundColor:'#06B6D433',fill:true,tension:.35}]},options:nl})},
+usr(){document.querySelectorAll('[data-role]').forEach(s=>s.onchange=()=>{const u=DB.users.find(x=>x.u===s.dataset.role);u.r=s.value;addLog(`${me.n} changed ${u.u} to ${RL[u.r]}`);toast('Role updated')});
+ $('#ub').onclick=async()=>{const f=$('#uf').elements,er=$('#ue'),n=f.n.value.trim(),u=f.u.value.trim().toLowerCase(),p=f.p.value;
+  if(n.length<2)return er.textContent='Enter the user’s full name.';if(!/^[a-z0-9_]{3,20}$/.test(u))return er.textContent='Username needs 3 to 20 letters, numbers, or underscores.';
+  if(DB.users.some(x=>x.u===u))return er.textContent='That username is already taken.';if(p.length<8||!/\d/.test(p)||!/[a-zA-Z]/.test(p))return er.textContent='Password needs 8 or more characters, with letters and numbers.';
+  const s=newSalt();DB.users.push({u,n,r:f.r.value,s,h:await hash(p,s)});addLog(me.n+' added user '+u);toast('User added');go('usr')}}};
+
+const q=v=>{v=String(v);return '"'+(/^[=+\-@]/.test(v)?"'"+v:v).replace(/"/g,'""')+'"'};
+async function dlFile(name,data){try{const blob=data instanceof Blob?data:new Blob([data],{type:name.toLowerCase().endsWith('.csv')?'text/csv;charset=utf-8':'application/octet-stream'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.style.display='none';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);toast('Download started: '+name)}catch(e){toast('Could not download the file. Please try again.','bad')}}
+const act={
+add:()=>{go('stu');setTimeout(()=>form(null),420)},all:()=>go('stu'),rep:()=>go('rep'),edit:id=>form(id),
+async del(id){const s=DB.students.find(x=>x.id===id);if(!s||!R().del)return;if(await confirmBox('Delete '+s.name+' permanently? This cannot be undone.')){DB.students=DB.students.filter(x=>x.id!==id);addLog(`${me.n} deleted ${s.name}`);toast('Student deleted');rows()}},
+csv(){if(!R().exp)return;const h=['ID','Roll','Name','Email','Class','Gender','DOB','Status',...SUBJ,'Percentage','Grade','Attendance %'];dlFile('students.csv',[h.map(q).join(',')].concat(DB.students.map(s=>[s.id,s.roll,s.name,s.email,s.cls,s.gender,s.dob,s.status,...SUBJ.map(j=>s.marks[j]),pct(s),grade(pct(s)),att(s)].map(q).join(','))).join('\n'))},
+pdf(){if(!R().exp)return;if(!window.jspdf){toast('The PDF tool did not load.','bad');return}const d=new jspdf.jsPDF();let y=18;d.setFontSize(16);d.text('Smart Student Hub: Student Report',14,y);y+=7;d.setFontSize(9);d.text('Generated '+new Date().toLocaleString()+' by '+me.n,14,y);y+=9;
+ const hd=()=>{d.setFont(undefined,'bold');[['ID',14],['Name',32],['Class',90],['Marks',110],['Grade',130],['Attendance',150],['Status',178]].forEach(c=>d.text(c[0],c[1],y));d.setFont(undefined,'normal');y+=6};hd();
+ DB.students.forEach(s=>{if(y>280){d.addPage();y=18;hd()}const p=pct(s);[[s.id,14],[s.name.slice(0,28),32],[s.cls,90],[p+'%',110],[grade(p),130],[att(s)+'%',150],[s.status,178]].forEach(c=>d.text(String(c[0]),c[1],y));y+=6});
+ dlFile('student-report.pdf',d.output('blob'))},
+async reset(id){if(!await confirmBox('Issue a temporary password for '+id+'?','Reset'))return;const u=DB.users.find(x=>x.u===id),p='Temp@'+(crypto.getRandomValues(new Uint32Array(1))[0]%9000+1000);u.s=newSalt();u.h=await hash(p,u.s);u.reset=false;addLog('Password reset for '+id);
+ const o=modal(`<h3>Temporary password</h3><p>Share this with ${esc(u.n)} securely: <b>${p}</b></p><div class="row end"><button class="btn pri">Done</button></div>`);o.onclick=e=>{if(e.target.closest('button'))o.close()};go('usr')}};
+
+function form(id){const r=R(),s=id?DB.students.find(x=>x.id===id):null;if(!s&&!r.add)return;const P=r.all?'':' disabled',A=r.acad?'':' disabled',can=s?r.acad:r.all,v=k=>esc(s?s[k]:'');
+ const o=modal(`<h3>${s?(can?'Edit student':'Student profile'):'Add student'}</h3><form id="sf" novalidate><div class="fg"><label>Full name<input name="name" value="${v('name')}"${P}></label><label>Email<input name="email" type="email" value="${v('email')}"${P}></label><label>Roll number<input name="roll" value="${v('roll')}"${P}></label><label>Class<select name="cls"${P}>${opt(CLS,s&&s.cls)}</select></label><label>Gender<select name="gender"${P}>${opt(['Male','Female','Other'],s&&s.gender)}</select></label><label>Date of birth<input name="dob" type="date" value="${v('dob')}"${P}></label><label>Status<select name="status"${P}>${opt(['Active','Inactive'],s&&s.status)}</select></label></div>
+ <h4>Subject marks (out of 100)</h4><div class="fg">${SUBJ.map(j=>`<label>${j}<input name="m_${j}" type="number" min="0" max="100" value="${s?s.marks[j]:''}"${A}></label>`).join('')}</div>
+ <h4>Attendance</h4><div class="fg"><label>Days present<input name="ap" type="number" min="0" value="${s?s.att.p:''}"${A}></label><label>Total days<input name="at" type="number" min="1" value="${s?s.att.t:''}"${A}></label></div>
+ <p class="err" id="fe" role="alert"></p><div class="row end"><button type="button" class="btn" id="fc">Close</button>${can?'<button class="btn pri" type="submit">Save changes</button>':''}</div></form>`);
+ $('#fc',o).onclick=o.close;
+ $('#sf',o).onsubmit=e=>{e.preventDefault();if(!can)return;const f=e.target.elements,g=k=>f[k].value.trim(),bad=m=>{$('#fe',o).textContent=m},d={},isNew=!s;
+  if(r.all){Object.assign(d,{name:g('name'),email:g('email').toLowerCase(),roll:g('roll'),cls:g('cls'),gender:g('gender'),dob:g('dob'),status:g('status')});
+   if(d.name.length<2)return bad('Enter the student’s full name.');if(!/^\S+@\S+\.\S+$/.test(d.email))return bad('Enter a valid email address.');if(!d.roll)return bad('Enter a roll number.');
+   if(DB.students.some(x=>x.id!==(s&&s.id)&&(x.email===d.email||(x.roll===d.roll&&x.cls===d.cls))))return bad('That email, or that roll number in this class, already exists.');
+   if(d.dob&&new Date(d.dob)>new Date())return bad('Date of birth cannot be in the future.')}
+  const marks={};for(const j of SUBJ){const m=g('m_'+j);if(m===''||isNaN(m)||+m<0||+m>100)return bad('Marks for '+j+' must be between 0 and 100.');marks[j]=+m}
+  const p=g('ap'),t=g('at');if(p===''||t===''||!Number.isInteger(+p)||!Number.isInteger(+t)||+t<1||+p<0||+p>+t)return bad('Attendance needs whole numbers, with days present not above total days.');
+  const at={p:+p,t:+t};
+  if(s)Object.assign(s,d,{marks,att:at,upd:Date.now()});else DB.students.push(Object.assign({id:'SH'+(Math.max(1000,...DB.students.map(x=>+x.id.slice(2)))+1),adm:Date.now(),upd:Date.now(),marks,att:at},d));
+  addLog(`${me.n} ${isNew?'added':'updated'} ${s?s.name:d.name}`);o.close();toast(isNew?'Student added':'Student updated');view==='stu'?rows():go(view)}}
+
+(async()=>{try{DB=JSON.parse(localStorage.getItem(K))}catch(e){DB=null}
+ if(!DB||!DB.users){DB=await seed();save()}
+ let u;try{u=localStorage.getItem(SK)}catch(e){}me=DB.users.find(x=>x.u===u);
+ if(me){shell();go('dash')}else loginView()})();
+</script>
+</body>
+</html>
